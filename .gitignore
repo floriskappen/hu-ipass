@@ -162,3 +162,4 @@ cython_debug/
 
 # Custom directories excluded for this project
 data/*
+extracted_mfccs.json
