@@ -26,6 +26,8 @@ if __name__ == "__main__":
                 for directory in dirs:
                     for root, d, files in os.walk(os.path.join(train_dir, directory)):
                         for file in files:
+                            if "aug.wav" in file:
+                                continue
                             filename_without_extension = ".".join(file.split(".")[:-1])
                             filepath = os.path.join(root, file)
                             absolute_filepath = os.path.abspath(filepath)
