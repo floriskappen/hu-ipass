@@ -2,10 +2,11 @@
 import os
 import json
 from pathlib import Path
-import wave
 import math
+import wave
 
 import librosa
+import python_speech_features
 
 DATA_DIR = "../data/"
 NUM_SEGMENTS = 5
@@ -46,33 +47,31 @@ def extract_mfcc():
             for video_id in os.listdir(set_dir):
                 video_cuts_dir = set_dir + f"{video_id}/"
                 for video_cut in os.listdir(video_cuts_dir):
-                    if "aug.wav" in video_cut:
-                        continue
                     audio_cut_path = Path(video_cuts_dir + video_cut).absolute()
                     try:
                         with wave.open(str(audio_cut_path), "rb") as wave_file:
                             frame_rate = wave_file.getframerate()
-                        signal, sr = librosa.load(audio_cut_path, sr=frame_rate)
+                        signal, sample_rate = librosa.load(audio_cut_path, sr=frame_rate)
                         for segment in range(NUM_SEGMENTS):
-                            num_samples_per_segment = int(frame_rate / NUM_SEGMENTS)
+                            num_samples_per_segment = int(sample_rate / NUM_SEGMENTS)
                             start_sample = num_samples_per_segment * segment # s=0 -> 0
                             finish_sample = start_sample + num_samples_per_segment # s=0 -> num_samples_per_segment
                             expected_num_mfcc_vectors_per_segment = math.ceil(num_samples_per_segment / HOP_LENGTH)
-                            mfcc = librosa.feature.mfcc(y=signal[start_sample:finish_sample],
-                                                        sr=sr,
-                                                        n_fft=N_FFT,
-                                                        n_mfcc=N_MFCC,
-                                                        hop_length=HOP_LENGTH)
-                            mfcc = mfcc.T
-                            if len(mfcc) == expected_num_mfcc_vectors_per_segment:
-                                datas[set_type]["mfcc"].append(mfcc.tolist())
-                                datas[set_type]["labels"].append(index)
+                            mfcc = python_speech_features.mfcc(
+                                signal=signal[start_sample:finish_sample],
+                                samplerate=sample_rate,
+                                nfft=N_FFT,
+                                numcep=N_MFCC,
+                                winstep=HOP_LENGTH / sample_rate
+                            )
+                            datas[set_type]["mfcc"].append(mfcc.tolist())
+                            datas[set_type]["labels"].append(index)
                     except wave.Error as e:
                         print(e)
                         continue
 
     for data_type in datas:
-        with open(f"{DATA_DIR}extracted_mfccs_{data_type}.json", "w") as f:
+        with open(f"{DATA_DIR}extracted_mfccs_sf_{data_type}.json", "w") as f:
             f.write(json.dumps(datas[data_type]))
 
 if __name__ == "__main__":

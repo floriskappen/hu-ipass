@@ -10,16 +10,15 @@ def load_data(filename):
     # Load the training data
     with open(f"{DATA_DIR}{filename}", "r") as training_data_file:
         training_data = json.load(training_data_file)
-    
     X = np.array(training_data["mfcc"])
     y = np.array(training_data["labels"])
     mapping = np.array(training_data["mapping"])
     return X, y, mapping
 
 def train_model():
-    X_train, y_train, mapping = load_data("extracted_mfccs_train.json")
-    X_test, y_test, mapping = load_data("extracted_mfccs_test.json")
-    X_validation, y_validation, mapping = load_data("extracted_mfccs_validation.json")
+    X_train, y_train, mapping = load_data("extracted_mfccs_cus_train.json")
+    X_test, y_test, mapping = load_data("extracted_mfccs_cus_test.json")
+    X_validation, y_validation, mapping = load_data("extracted_mfccs_cus_validation.json")
 
     input_shape = (X_train.shape[1], X_train.shape[2])
 
@@ -65,7 +64,7 @@ def train_model():
     print(f"Expected mapping: {mapping[y]}, Predicted mapping: {mapping[predicted_index]}")
 
     
-    model.save(f"{DATA_DIR}model_{datetime.datetime.now().strftime('%d-%m-%y %H-%M-%S')}.h5")
+    model.save(f"{DATA_DIR}model_{datetime.datetime.now().strftime('%d-%m-%y_%H-%M-%S')}.h5")
 
 if __name__ == "__main__":
     train_model()
