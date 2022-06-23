@@ -15,9 +15,11 @@ This repo contains a bunch of directories, each containing their own script(s). 
 
 The order in which the scripts in the directories should be executed is the following:
 1. `data_gathering/`: Downloads the data
-3. `data_preparation/`: Filters and cuts the full songs into 30s pieces
-2. `data_augmentation/`: Expands the training set by augmenting the data using various techniques
+2. `data_preparation/`: Filters and cuts the full songs into 30s pieces
+3. `data_augmentation/`: Expands the training set by augmenting the data using various techniques
 4. `data_preprocessing/`: Generates MFCCs for each set and saves them as JSON
+5. `train_model`: Trains a LSTM model with the generated MFCCs
+6. `do_prediction`: Does a prediction with an audio file of your choice
 
 ## data/ folder
 The `data/` folder at the root of this repository will be filled with the collected data. The structure is as follows:

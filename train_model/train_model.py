@@ -16,9 +16,9 @@ def load_data(filename):
     return X, y, mapping
 
 def train_model():
-    X_train, y_train, mapping = load_data("extracted_mfccs_cus_train.json")
-    X_test, y_test, mapping = load_data("extracted_mfccs_cus_test.json")
-    X_validation, y_validation, mapping = load_data("extracted_mfccs_cus_validation.json")
+    X_train, y_train, mapping = load_data("extracted_mfccs_custom_train.json")
+    X_test, y_test, mapping = load_data("extracted_mfccs_custom_test.json")
+    X_validation, y_validation, mapping = load_data("extracted_mfccs_custom_validation.json")
 
     input_shape = (X_train.shape[1], X_train.shape[2])
 
