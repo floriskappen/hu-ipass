@@ -84,7 +84,7 @@ def get_mel_spectrogram(signal, sample_rate, n_fft, hop_length):
         hop_length
     )
 
-    # Get the basis ofthe mel filter
+    # Get the basis of the mel filter
     mel_basis = build_mel_filter(sample_rate=sample_rate, n_fft=n_fft)
 
     # Multiply the spectrogram and the mel_basis filter to filter the spectrogram
