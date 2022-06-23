@@ -3,7 +3,6 @@ import os
 import json
 from pathlib import Path
 import wave
-import math
 
 import librosa
 
@@ -49,27 +48,34 @@ def extract_mfcc(extraction_function, mfcc_filename = "extracted_mfccs"):
                     if "aug.wav" in video_cut:
                         continue
                     audio_cut_path = Path(video_cuts_dir + video_cut).absolute()
-                    try:
-                        with wave.open(str(audio_cut_path), "rb") as wave_file:
-                            frame_rate = wave_file.getframerate()
-                        signal, sr = librosa.load(audio_cut_path, sr=frame_rate)
-                        for segment in range(NUM_SEGMENTS):
-                            num_samples_per_segment = int(frame_rate / NUM_SEGMENTS)
-                            start_sample = num_samples_per_segment * segment # s=0 -> 0
-                            finish_sample = start_sample + num_samples_per_segment # s=0 -> num_samples_per_segment
-                            mfcc = extraction_function(
-                                signal=signal[start_sample:finish_sample],
-                                sample_rate=sr,
-                                n_mfcc=N_MFCC,
-                                n_fft=N_FFT,
-                                hop_length=HOP_LENGTH
-                            )
-                            datas[set_type]["mfcc"].append(mfcc.tolist())
-                            datas[set_type]["labels"].append(index)
-                    except wave.Error as e:
-                        print(e)
-                        continue
+                    mfccs = extract_one_file_mfcc(extraction_function, audio_cut_path)
+                    for mfcc in mfccs:
+                        datas[set_type]["mfcc"].append(mfcc)
+                        datas[set_type]["labels"].append(index)
 
     for data_type in datas:
         with open(f"{DATA_DIR}{mfcc_filename}_{data_type}.json", "w") as f:
             f.write(json.dumps(datas[data_type]))
+
+
+def extract_one_file_mfcc(extraction_function, file_path):
+    mfccs = []
+    try:
+        with wave.open(str(file_path), "rb") as wave_file:
+            frame_rate = wave_file.getframerate()
+        signal, sr = librosa.load(file_path, sr=frame_rate)
+        for segment in range(NUM_SEGMENTS):
+            num_samples_per_segment = int(frame_rate / NUM_SEGMENTS)
+            start_sample = num_samples_per_segment * segment # s=0 -> 0
+            finish_sample = start_sample + num_samples_per_segment # s=0 -> num_samples_per_segment
+            mfcc = extraction_function(
+                signal=signal[start_sample:finish_sample],
+                sample_rate=sr,
+                n_mfcc=N_MFCC,
+                n_fft=N_FFT,
+                hop_length=HOP_LENGTH
+            )
+            mfccs.append(mfcc.tolist())
+    except wave.Error as e:
+        print(e)
+    return mfccs
