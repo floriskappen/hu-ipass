@@ -41,3 +41,7 @@ The `data/` folder at the root of this repository will be filled with the collec
                 - `${song_id}`: Contains 30s segments of the song
             - `test/`: Contains the test set
                 - `${song_id}`: Contains 30s segments of the song
+
+## Repository link
+As this will also be submitted as a .zip file, here's a link to the entire repository:
+https://github.com/floriskappen/hu-ipass
