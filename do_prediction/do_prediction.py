@@ -7,11 +7,12 @@ import sys
 import numpy as np
 import keras
 import ffmpeg
+from yt_dlp import YoutubeDL
 
 
 DATA_DIR = "../data/"
 MODEL_PATH = "../data/model_22-06-22_22-31-46.h5"
-INPUT_FILE = "../data/electronic/uncut/Y1_VsyLAGuk.webm"
+INPUT_URL_ID = "Y1_VsyLAGuk"
 INPUT_LABEL = "electronic"
 
 # Will be removed after prediction is done
@@ -24,10 +25,12 @@ from data_preprocessing.extract_mfcc import extract_one_file_mfcc
 from data_preprocessing.utils import get_mfcc
 
 def do_prediction():
+    input_file = TEMP_OUTPUT_DIR + download_file(INPUT_URL_ID, TEMP_OUTPUT_DIR)
+
     genres = [name for name in os.listdir(DATA_DIR) if "." not in name]
 
     model = keras.models.load_model(MODEL_PATH)
-    absolute_filepath = os.path.abspath(INPUT_FILE)
+    absolute_filepath = os.path.abspath(input_file)
 
     result = ffmpeg.probe(absolute_filepath)
     duration = float(result.get("format", {}).get("duration", "0.0"))
@@ -35,7 +38,7 @@ def do_prediction():
         print("Audio file is too short")
         return
 
-    filename_without_extension = INPUT_FILE.split("/")[-1].split(".")[0]
+    filename_without_extension = input_file.split("/")[-1].split(".")[0]
 
     predictions = []
 
@@ -72,6 +75,7 @@ def do_prediction():
         predicted_indexes = np.argmax(prediction, axis=1) # [3]
         predictions.extend(predicted_indexes.tolist())
         os.remove(output_filepath.absolute())
+    os.remove(absolute_filepath)
     os.rmdir(output_dir)
     os.rmdir(TEMP_OUTPUT_DIR)
 
@@ -81,6 +85,18 @@ def do_prediction():
     predicted_genre = genres[predicted_index]
     print(f"Expected mapping: {INPUT_LABEL}, Predicted mapping: {predicted_genre}")
 
+
+
+def download_file(youtube_id, output_dir):
+    ydl = YoutubeDL({
+        "outtmpl": f"{output_dir}/%(id)s.%(ext)s",
+        "ignoreerrors": True,
+        "format": "bestaudio/best",
+    })
+    ydl.download([f"https://www.youtube.com/watch?v={youtube_id}"])
+    file_list = [name for name in os.listdir(TEMP_OUTPUT_DIR) if youtube_id in name]
+    if len(file_list):
+        return file_list[0]
 
 
 if __name__ == "__main__":
