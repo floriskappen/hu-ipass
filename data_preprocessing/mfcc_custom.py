@@ -3,6 +3,7 @@ from extract_mfcc import extract_mfcc
 import utils
 
 def extraction_function_custom(signal, sample_rate, n_mfcc, n_fft, hop_length):
+    # Use the custom get_mfcc function from utils to extract it
     mfcc = utils.get_mfcc(
         signal=signal,
         sample_rate=sample_rate,

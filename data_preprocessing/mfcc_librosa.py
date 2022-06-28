@@ -4,6 +4,7 @@ import librosa
 from extract_mfcc import extract_mfcc
 
 def extraction_function_librosa(signal, sample_rate, n_mfcc, n_fft, hop_length):
+    # Use librosa's MFCC function
     mfcc =  librosa.feature.mfcc(
         y=signal,
         sr=sample_rate,

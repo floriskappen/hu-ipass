@@ -7,15 +7,16 @@ import keras
 DATA_DIR = "../data/"
 
 def load_data(filename):
-    # Load the training data
-    with open(f"{DATA_DIR}{filename}", "r") as training_data_file:
-        training_data = json.load(training_data_file)
-    X = np.array(training_data["mfcc"])
-    y = np.array(training_data["labels"])
-    mapping = np.array(training_data["mapping"])
+    # Load the data
+    with open(f"{DATA_DIR}{filename}", "r") as data_file:
+        data = json.load(data_file)
+    X = np.array(data["mfcc"])
+    y = np.array(data["labels"])
+    mapping = np.array(data["mapping"])
     return X, y, mapping
 
 def train_model():
+    # Load the training, test and validation datasets
     X_train, y_train, mapping = load_data("extracted_mfccs_custom_train.json")
     X_test, y_test, mapping = load_data("extracted_mfccs_custom_test.json")
     X_validation, y_validation, mapping = load_data("extracted_mfccs_custom_validation.json")
@@ -39,10 +40,12 @@ def train_model():
     # Output layer
     model.add(keras.layers.Dense(10, activation="softmax"))
 
+    # Adam optimizer
     optimizer = keras.optimizers.Adam(learning_rate=0.0001)
     model.compile(optimizer=optimizer,
                 loss="sparse_categorical_crossentropy",
                 metrics=["accuracy"])
+
     # Train the CNN
     model.fit(X_train, y_train, validation_data=(X_validation, y_validation), batch_size=32, epochs=30)
 
@@ -63,7 +66,7 @@ def train_model():
     predicted_index = np.argmax(prediction, axis=1) # [3]
     print(f"Expected mapping: {mapping[y]}, Predicted mapping: {mapping[predicted_index]}")
 
-    
+    # Save the model with a timestamp day-month-year_hour-minute-seconds
     model.save(f"{DATA_DIR}model_{datetime.datetime.now().strftime('%d-%m-%y_%H-%M-%S')}.h5")
 
 if __name__ == "__main__":

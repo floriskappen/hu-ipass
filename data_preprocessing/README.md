@@ -6,6 +6,14 @@ This directory contains various scripts to preprocess the gathered data
 Data needs to be ready, see the `data_gathering/` directory.
 
 
+## Explanation
+**extract_mfcc**    
+Helper function to do everything necessary to extract the MFCCs apart from actually extracting it itself.   
+The function needs an argument 'extraction_function' which is called to actually get the MFCCs.
+
+**utils**   
+Contains the actual functions necessary to extract the MFCCs from an audio file. Contains __detailed documentation__
+
 ## MFCC Extraction
 What is MFCC?
 

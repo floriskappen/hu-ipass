@@ -15,11 +15,13 @@ def execute_cut():
     genres = [name for name in os.listdir(DATA_DIR)]
     for genre in genres:
         base_data_dir = f"../data/{genre}"
+
         uncut_dir = base_data_dir + "/uncut"
         train_dir = base_data_dir + "/cut/train"
         validation_dir = base_data_dir + "/cut/validation"
         test_dir = base_data_dir + "/cut/test"
-        
+
+        # Calculate the amount of files which will be used for training and validation
         song_amount = len([name for name in os.listdir(uncut_dir)])
         train_amount = math.floor(song_amount / 100 * 80) # 80%
         validation_amount = math.floor(song_amount / 100 * 10) # 10%
@@ -32,12 +34,12 @@ def execute_cut():
                     filepath = os.path.join(root, file)
                     absolute_filepath = os.path.abspath(filepath)
 
-                    # Only convert videos that are longer than 91 seconds and shorter than 7min
+                    # Only convert videos that are longer than 91 seconds and shorter than 7min (420 seconds)
                     result = ffmpeg.probe(absolute_filepath)
                     duration = float(result.get("format", {}).get("duration", "0.0"))
                     if duration < 91.0 or duration > 420.0:
                         continue
-                    
+
                     target_output_dir = train_dir
                     if index + 1 > train_amount:
                         if index + 1 > train_amount + validation_amount:

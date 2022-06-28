@@ -1,3 +1,5 @@
+# Contains a list per genre with links to youtube playlists that will be downloaded.
+
 TARGET_PLAYLIST_GENRES = {
     "blues": [
         "https://www.youtube.com/watch?v=u9sq3ME0JHQ&list=PLFjmckBbDlzSE47xD0FivigDOARiLJl61" # ~95 videos
