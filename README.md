@@ -25,6 +25,10 @@ The order in which the scripts in the directories should be executed is the foll
 ## The algorithm
 If you are just here for the implementation of the algorithm, please check `data_preprocessing/utils.py` which contains all the code for that.
 
+## Tests
+The `tests/` folder contains (multiple) tests for the different components. These can be run by running `pytest` in the root directory (this one)
+
+
 ## data/ folder
 The `data/` folder at the root of this repository will be filled with the collected data. The structure is as follows:
 - `data/`
